@@ -9,7 +9,7 @@
 # assignment-tfstate-<your-account-id>, run `aws sts get-caller-identity` to
 # find it) and create it with that same name in the bootstrap step. The
 # DynamoDB lock table name is only account-scoped, so "assignment-tf-lock" is
-# fine as-is.
+# fine as-is. test test
 terraform {
   backend "s3" {
     bucket         = "assignment-library-219533466732" # <-- change this
