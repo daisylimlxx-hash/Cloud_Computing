@@ -13,6 +13,12 @@ on:
         description: "Branch/tag/commit to deploy (only used when mode=deploy)"
         required: false
         default: "main"
+      target:
+        description: "Environment: sandbox = testing VPC, production = production VPC"
+        required: true
+        default: "sandbox"
+        type: choice
+        options: [sandbox, production]
 
 jobs:
   plan-or-destroy:
@@ -21,6 +27,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       action: ${{ inputs.mode }}
+      target: ${{ inputs.target }}
     secrets: inherit
 
   deploy:
@@ -29,4 +36,5 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       ref: ${{ inputs.ref }}
+      target: ${{ inputs.target }}
     secrets: inherit

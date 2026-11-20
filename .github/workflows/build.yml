@@ -9,11 +9,21 @@ on:
         default: "plan"
         type: choice
         options: [plan, apply, destroy]
+      target:
+        description: "Environment: sandbox = testing VPC, production = production VPC"
+        required: true
+        default: "sandbox"
+        type: choice
+        options: [sandbox, production]
   workflow_call:
     inputs:
       action:
         required: true
         type: string
+      target:
+        required: false
+        type: string
+        default: "sandbox"
     outputs:
       alb_dns_name:
         description: "ALB DNS name after apply"
@@ -21,11 +31,11 @@ on:
 
 defaults:
   run:
-    working-directory: infra/envs/sandbox
+    working-directory: infra/envs/${{ inputs.target }}
 
 jobs:
   terraform:
-    name: Terraform ${{ inputs.action }}
+    name: Terraform ${{ inputs.action }} (${{ inputs.target }})
     runs-on: ubuntu-latest
     outputs:
       alb_dns_name: ${{ steps.output.outputs.alb_dns_name }}

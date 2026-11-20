@@ -7,12 +7,22 @@ on:
         description: "Branch/tag/commit to deploy"
         required: false
         default: "main"
+      target:
+        description: "Environment: sandbox = testing VPC, production = production VPC"
+        required: true
+        default: "sandbox"
+        type: choice
+        options: [sandbox, production]
   workflow_call:
     inputs:
       ref:
         required: false
         type: string
         default: "main"
+      target:
+        required: false
+        type: string
+        default: "sandbox"
 
 jobs:
   infra:
@@ -20,6 +30,7 @@ jobs:
     uses: ./.github/workflows/build.yml
     with:
       action: apply
+      target: ${{ inputs.target || 'sandbox' }}
     secrets: inherit
 
   app:
@@ -57,7 +68,7 @@ jobs:
 
       - name: Get S3 bucket + ASG name + target group ARN from Terraform output
         id: tf-output
-        working-directory: infra/envs/sandbox
+        working-directory: infra/envs/${{ inputs.target || 'sandbox' }}
         run: |
           terraform init -input=false
           echo "bucket=$(terraform output -raw s3_bucket_name)" >> "$GITHUB_OUTPUT"
