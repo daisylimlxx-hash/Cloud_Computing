@@ -29,14 +29,13 @@ on:
         description: "ALB DNS name after apply"
         value: ${{ jobs.terraform.outputs.alb_dns_name }}
 
-defaults:
-  run:
-    working-directory: infra/envs/${{ inputs.target }}
-
 jobs:
   terraform:
     name: Terraform ${{ inputs.action }} (${{ inputs.target }})
     runs-on: ubuntu-latest
+    defaults:                                
+      run:
+        working-directory: infra/envs/${{ inputs.target }}
     outputs:
       alb_dns_name: ${{ steps.output.outputs.alb_dns_name }}
     env:
